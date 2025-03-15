@@ -6,16 +6,13 @@ El Gestor de Gastos Personales está diseñado para ayudar a los usuarios a llev
 
 ## Estructura del Proyecto
 
-# main.dart
+#### main.dart
 Punto de entrada de la aplicación → Configura el ChangeNotifierProvider y establece la pantalla principal.
-
-# models
+#### models
 transaction_model.dart → Define la estructura de una transacción (ingreso o gasto) con atributos como ID, categoría, monto y tipo.
-
-# providers
+#### providers
 transaction_provider.dart → Gestiona el estado de las transacciones, incluyendo la suma total, el cálculo por categorías y la funcionalidad de agregar o eliminar transacciones.
-
-# screens
+#### screens
 home_screen.dart → Pantalla principal donde se muestran las transacciones en una lista organizada, con opción de agregar y eliminar elementos.
 add_transaction_screen.dart → Pantalla donde los usuarios pueden ingresar nuevos gastos o ingresos, seleccionando categoría y monto.
 summary_screen.dart → Pantalla de resumen que muestra el total de ingresos, gastos y el desglose por categoría en listas estilizadas.
