@@ -38,17 +38,18 @@ class TransactionProvider with ChangeNotifier {
   }
 
   // Método para agregar una nueva transacción
-  void addTransaction(String type, String category, double amount) {
-    final newTransaction = Transaction(
-      id: Uuid().v4(), // Genera un ID único
-      type: type,
-      category: category,
-      amount: amount,
-      date: DateTime.now(),
-    );
-    _transactions.add(newTransaction);
-    notifyListeners(); // Notifica a los widgets que usan este proveedor
-  }
+ void addTransaction(String type, String category, double amount, {DateTime? date}) {
+  final newTransaction = Transaction(
+    id: Uuid().v4(), // Genera un ID único
+    type: type,
+    category: category,
+    amount: amount,
+    date: date ?? DateTime.now(), // Si no se pasa una fecha, usa la fecha actual
+  );
+  _transactions.add(newTransaction);
+  notifyListeners(); // Notifica a los widgets que usan este proveedor
+ }
+
 
   // Método para eliminar una transacción por ID
   void deleteTransaction(String id) {

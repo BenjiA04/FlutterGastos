@@ -13,6 +13,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   String _type = "expense"; // Tipo predeterminado: gasto
   String _category = "General"; // Categoría predeterminada
   double _amount = 0.0;
+  DateTime? _selectedDate; // Variable para almacenar la fecha seleccionada
+
+  // Método para mostrar el selector de fecha
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +60,29 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 keyboardType: TextInputType.number,
                 onChanged: (value) => _amount = double.tryParse(value) ?? 0.0,
               ),
+              // Selector de fecha
+              Row(
+                children: [
+                  Text(
+                    _selectedDate == null
+                        ? "Selecciona la fecha"
+                        : "${_selectedDate!.toLocal()}".split(' ')[0],
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context),
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
               // Botón para agregar la transacción
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    // Agregar la transacción con la fecha seleccionada
                     Provider.of<TransactionProvider>(context, listen: false)
-                        .addTransaction(_type, _category, _amount);
+                        .addTransaction(_type, _category, _amount, date: _selectedDate);
                     Navigator.pop(context); // Regresa a la pantalla anterior
                   }
                 },

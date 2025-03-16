@@ -1,6 +1,6 @@
-// Pantalla principal que muestra la lista de transacciones con diseño mejorado
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../providers/transaction_provider.dart';
 import 'add_transaction_screen.dart';
 import 'summary_screen.dart';
@@ -9,6 +9,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transactionProvider = Provider.of<TransactionProvider>(context);
+
+    // Calcular los totales de ingresos y gastos
+    double totalIncome = 0.0;
+    double totalExpense = 0.0;
+
+    for (var tx in transactionProvider.transactions) {
+      if (tx.type == 'income') {
+        totalIncome += tx.amount;
+      } else {
+        totalExpense += tx.amount;
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text('Gestor de Gastos')),
@@ -23,6 +35,43 @@ class HomeScreen extends StatelessWidget {
                   'Total: \$${transactionProvider.totalAmount.toStringAsFixed(2)}',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
+                SizedBox(height: 20),
+
+                // Gráfico de barras con los totales de ingresos y gastos
+                SizedBox(
+                  height: 200, // Ajusta la altura según necesites
+                  child: BarChart(
+                    BarChartData(
+                      titlesData: FlTitlesData(show: true),
+                      borderData: FlBorderData(show: true),
+                      barGroups: [
+                        BarChartGroupData(
+                          x: 0,
+                          barRods: [
+                            BarChartRodData(
+                              toY: totalIncome,  // Ingresos
+                              color: Colors.green,
+                              width: 20,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ],
+                        ),
+                        BarChartGroupData(
+                          x: 1,
+                          barRods: [
+                            BarChartRodData(
+                              toY: totalExpense, // Gastos
+                              color: Colors.red,
+                              width: 20,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
                 SizedBox(height: 10),
                 // Botón para navegar a la pantalla de resumen de gastos
                 ElevatedButton(
@@ -41,8 +90,7 @@ class HomeScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: transactionProvider.transactions.length,
               itemBuilder: (context, index) {
-                final tx = transactionProvider
-                    .transactions[index]; // Obtiene cada transacción
+                final tx = transactionProvider.transactions[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
@@ -80,8 +128,7 @@ class HomeScreen extends StatelessWidget {
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            transactionProvider.deleteTransaction(
-                                tx.id); // Elimina la transacción seleccionada
+                            transactionProvider.deleteTransaction(tx.id);
                           },
                         ),
                       ],
