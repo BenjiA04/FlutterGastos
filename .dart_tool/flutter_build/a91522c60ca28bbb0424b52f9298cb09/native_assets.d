@@ -1,1 +1,0 @@
- /Users/yamelmiranda/Desktop/curso\ -\ desarrollo\ frontend/FlutterGastos/.dart_tool/flutter_build/a91522c60ca28bbb0424b52f9298cb09/native_assets.yaml: 
