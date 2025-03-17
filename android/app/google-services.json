@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510376192927",
+    "project_id": "fluttergastos-fbc08",
+    "storage_bucket": "fluttergastos-fbc08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510376192927:android:d9d2921310f9e09b9c2baa",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_proyectofinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ0URQWdCwKBr4IutGmk4rjlMcks8TfpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
