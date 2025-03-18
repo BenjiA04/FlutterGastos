@@ -1,6 +1,5 @@
 // Proveedor para gestionar la lista de transacciones
 import 'package:flutter/material.dart';
-import '../models/transaction_model.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/transaction_model.dart' as myModels;
