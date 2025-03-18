@@ -108,28 +108,28 @@ class HomeScreen extends StatelessWidget {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor:
-                          tx.type == "income" ? Colors.green : Colors.red,
+                          tx['type'] == "income" ? Colors.green : Colors.red,
                       child: Icon(
-                        tx.type == "income"
+                        tx['type'] == "income"
                             ? Icons.arrow_upward
                             : Icons.arrow_downward,
                         color: Colors.white,
                       ),
                     ),
                     title: Text(
-                      tx.category,
+                      tx['category'],
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      tx.type == "income" ? "Ingreso" : "Gasto",
+                      tx['type'] == "income" ? "Ingreso" : "Gasto",
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '\$${tx.amount.toStringAsFixed(2)}',
+                          '\$${tx['amount'].toStringAsFixed(2)}',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
