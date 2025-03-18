@@ -59,7 +59,7 @@ class TransactionProvider with ChangeNotifier {
       'type': newTransaction.type,
       'category': newTransaction.category,
       'amount': newTransaction.amount,
-      'date': newTransaction.date.toIso8601String(), // Guardamos como String ISO8601
+      'date': Timestamp.fromDate(newTransaction.date), // Guardamos como Timestamp
     });
 
   _transactions.add(newTransaction);
