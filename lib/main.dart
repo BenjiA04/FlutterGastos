@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Gestor de Gastos',
         theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
           primarySwatch: Colors.blue,
         ),
         home: HomeScreen(), // Establece la pantalla principal de la app

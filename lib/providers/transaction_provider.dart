@@ -45,7 +45,7 @@ class TransactionProvider with ChangeNotifier {
   }
 
   // Método para agregar una nueva transacción
- void addTransaction(String type, String category, double amount, {DateTime? date}) async {
+ Future<void> addTransaction(String type, String category, double amount, {DateTime? date}) async {
   final newTransaction = myModels.Transaction(
     id: Uuid().v4(), // Genera un ID único
     type: type,

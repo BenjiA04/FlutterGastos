@@ -30,6 +30,29 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
+  Future<void> _saveTransaction() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      try {
+        await Provider.of<TransactionProvider>(context, listen: false).addTransaction(_type, _category, _amount, date: _selectedDate ?? DateTime.now());
+
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Transacción agregada correctamente")),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error al guardar la transacción: $e")),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +62,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Selector de tipo de transacción
               DropdownButtonFormField(
@@ -52,13 +76,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               // Campo de entrada para la categoría
               TextFormField(
                 decoration: InputDecoration(labelText: "Categoría"),
-                onChanged: (value) => _category = value,
+                onSaved: (value) => _category = value ?? "General",
+                validator: (value) => value!.isEmpty ? "Ingrese una categoría" : null,
               ),
               // Campo de entrada para el monto
               TextFormField(
                 decoration: InputDecoration(labelText: "Monto"),
                 keyboardType: TextInputType.number,
-                onChanged: (value) => _amount = double.tryParse(value) ?? 0.0,
+                onSaved: (value) => _amount = double.tryParse(value ?? "0") ?? 0.0,
+                validator: (value) => (value == null || double.tryParse(value) == null || double.parse(value) <= 0)
+                    ? "Ingrese un monto válido"
+                    : null,
               ),
               // Selector de fecha
               Row(
@@ -78,14 +106,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               SizedBox(height: 20),
               // Botón para agregar la transacción
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Agregar la transacción con la fecha seleccionada
-                    Provider.of<TransactionProvider>(context, listen: false)
-                        .addTransaction(_type, _category, _amount, date: _selectedDate);
-                    Navigator.pop(context); // Regresa a la pantalla anterior
-                  }
-                },
+                onPressed: _saveTransaction,
                 child: Text("Agregar"),
               ),
             ],
