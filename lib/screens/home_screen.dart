@@ -1,40 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../providers/transaction_provider.dart';
 import 'add_transaction_screen.dart';
 import 'summary_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final transactionProvider = Provider.of<TransactionProvider>(context);
-
-    // Calcular los totales de ingresos y gastos
-    double totalIncome = 0.0;
-    double totalExpense = 0.0;
-
-    for (var tx in transactionProvider.transactions) {
-      if (tx.type == 'income') {
-        totalIncome += tx.amount;
-      } else {
-        totalExpense += tx.amount;
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text('Gestor de Gastos')),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Muestra el total de transacciones (suma de ingresos y gastos)
-                Text(
-                  'Total: \$${transactionProvider.totalAmount.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+      body: StreamBuilder(
+        // Escucha los cambios en la colección "transacciones"
+        stream: FirebaseFirestore.instance.collection('transacciones').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No hay transacciones aún'));
+          }
+
+          // Procesa los datos de Firestore
+          double totalIncome = 0.0;
+          double totalExpense = 0.0;
+          List transactions = snapshot.data!.docs.map((doc) {
+            var data = doc.data() as Map<String, dynamic>;
+            if (data['type'] == 'income') {
+              totalIncome += data['amount'];
+            } else {
+              totalExpense += data['amount'];
+            }
+            return data;
+          }).toList();
+
+          return Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Total: \$${(totalIncome - totalExpense).toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                 SizedBox(height: 20),
 
                 // Gráfico de barras con los totales de ingresos y gastos
@@ -88,9 +96,9 @@ class HomeScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: transactionProvider.transactions.length,
+              itemCount: transactions.length,
               itemBuilder: (context, index) {
-                final tx = transactionProvider.transactions[index];
+                final tx = transactions[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
@@ -100,46 +108,51 @@ class HomeScreen extends StatelessWidget {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor:
-                          tx.type == "income" ? Colors.green : Colors.red,
+                          tx['type'] == "income" ? Colors.green : Colors.red,
                       child: Icon(
-                        tx.type == "income"
+                        tx['type'] == "income"
                             ? Icons.arrow_upward
                             : Icons.arrow_downward,
                         color: Colors.white,
                       ),
                     ),
                     title: Text(
-                      tx.category,
+                      tx['category'],
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      tx.type == "income" ? "Ingreso" : "Gasto",
+                      tx['type'] == "income" ? "Ingreso" : "Gasto",
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '\$${tx.amount.toStringAsFixed(2)}',
+                          '\$${tx['amount'].toStringAsFixed(2)}',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            transactionProvider.deleteTransaction(tx.id);
-                          },
+                          onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('transacciones')
+                                    .doc(tx['id'])
+                                    .delete();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                ),
+              ],
+            );
+          }
+        ),
       // Botón flotante para agregar nuevas transacciones
       floatingActionButton: FloatingActionButton(
         onPressed: () {
