@@ -1,5 +1,5 @@
 # Gestor de Gastos Personales
-Este es un gestor de gastos desarrollado en Flutter con Dart. La aplicación permite a los usuarios registrar sus ingresos y gastos, organizarlos por categoría y visualizar un resumen detallado de sus finanzas. Está construido con Flutter, lo que permite su funcionamiento en múltiples plataformas como Android e iOS.
+Este es un gestor de gastos desarrollado en Flutter con Dart, con integración de Firebase para la persistencia de datos. La aplicación permite a los usuarios registrar sus ingresos y gastos, organizarlos por categoría y visualizar un resumen detallado de sus finanzas. Está construido con Flutter, lo que permite su funcionamiento en múltiples plataformas como Android e iOS.
 
 ## Descripcion
 El Gestor de Gastos Personales está diseñado para ayudar a los usuarios a llevar un control eficiente de sus finanzas, registrando sus ingresos y gastos de manera ordenada. La aplicación ofrece una interfaz intuitiva con listas estilizadas y permite visualizar el total acumulado, así como un desglose por categorías.
@@ -8,14 +8,16 @@ El Gestor de Gastos Personales está diseñado para ayudar a los usuarios a llev
 
 #### 1. main.dart
 - Punto de entrada de la aplicación → Configura el ChangeNotifierProvider y establece la pantalla principal.
-#### 2. models
+#### 2. firebase_options.dart
+- Configuración necesaria para conectar Firebase con la aplicación.
+#### 3. models
 - transaction_model.dart → Define la estructura de una transacción (ingreso o gasto) con atributos como ID, categoría, monto y tipo.
-#### 3. providers
-- transaction_provider.dart → Gestiona el estado de las transacciones, incluyendo la suma total, el cálculo por categorías y la funcionalidad de agregar o eliminar transacciones.
-#### 4. screens
-- home_screen.dart → Pantalla principal donde se muestran las transacciones en una lista organizada, con opción de agregar y eliminar elementos.
+#### 4. providers
+- transaction_provider.dart → Gestiona el estado de las transacciones, incluyendo la suma total, la categorización, la funcionalidad de agregar o eliminar transacciones y la sincronización con Firebase.
+#### 5. screens
+- home_screen.dart → Pantalla principal donde se muestran las transacciones en una lista organizada, con opción de agregar y eliminar elementos y un gráfico de barras para visualizar ingresos y gastos.
 - add_transaction_screen.dart → Pantalla donde los usuarios pueden ingresar nuevos gastos o ingresos, seleccionando categoría y monto.
-- summary_screen.dart → Pantalla de resumen que muestra el total de ingresos, gastos y el desglose por categoría en listas estilizadas.
+- summary_screen.dart → Pantalla de resumen que muestra el total de ingresos, gastos y el desglose por categoría o mes en listas estilizadas.
 
 ### Getting Started
 This project is a starting point for a Flutter application.
